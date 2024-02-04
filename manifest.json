@@ -1,0 +1,35 @@
+{
+    "manifest_version": 3,
+    "name": "LinkedOut",
+    "description": "Google sheet logger for LinkedIn jobs you have applied to.",
+    "version": "1.0",
+    
+    "permissions": ["identity", "notifications"],
+    "oauth2": {
+        "client_id": "",
+        "scopes": [
+            "https://www.googleapis.com/auth/drive",
+            "https://www.googleapis.com/auth/drive.file",
+            "https://www.googleapis.com/auth/drive.readonly",
+            "https://www.googleapis.com/auth/spreadsheets",          
+            "https://www.googleapis.com/auth/spreadsheets.readonly"
+        ]
+    },
+
+    "action": {
+      "default_popup": "index.html",
+      "default_icon": "icon.png"
+    },
+
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+          "js": ["content.js"],
+          "matches": [
+            "https://www.linkedin.com/jobs/*"
+          ]
+        }
+      ]
+}
