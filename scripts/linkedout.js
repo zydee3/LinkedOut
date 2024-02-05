@@ -64,7 +64,6 @@ let entryTemplate
 export const targetParentClassList = "jobs-search__job-details"
 export const targetButtonClassList = "artdeco-button__text"
 export const isTargetButtonText = (text) => text === "Apply" || text === "Easy Apply"
-export const targetTitleClassList = "job-details-jobs-unified-top-card__primary-description-without-tagline"
 
 
 export async function createListeners(sheetID, sheetCapacity, columnLink, data) {
