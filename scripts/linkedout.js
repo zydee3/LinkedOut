@@ -4,15 +4,15 @@ import { readColumn, writeRow, getColumnIdx } from './sheet.js'
 
 export async function establishNotificationPermission() {
     if (Notification.permission !== 'granted') {
-        const permission = await Notification.requestPermission()
+        const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
-            console.log('Notification permission denied')
+            console.log('Notification permission denied');
         } else {
-            console.log('Notification permission granted')
+            console.log('Notification permission granted');
         }
     }
 
-    return Notification.permission
+    return Notification.permission;
 }
 
 function sendNotification(title, message) {
@@ -24,26 +24,26 @@ function sendNotification(title, message) {
 /* End Region: Notification Handling ------------------------------ */
 /* Begin Region: Sheet Preprocessing and Handling ----------------- */
 
-const formulaExpr = /currentJobId=(\d+)/
+const formulaExpr = /currentJobId=(\d+)/;
 
 
 function extractJobId(link) {
-    const match = link.match(formulaExpr)
-    return match ? parseInt(match[1]) : -1
+    const match = link.match(formulaExpr);
+    return match ? parseInt(match[1]) : -1;
 }
 
 function containsJobId(formulas, jobId) {
     if (formulas.length === 0) {
-        return false
+        return false;
     }
 
-    for (let formula of formulas) {
+    for (const formula of formulas) {
         if (extractJobId(formula) === jobId) {
             return true
         }
     }
 
-    return false
+    return false;
 }
 
 async function getWriteRowIdx(sheetID, sheetCapacity, columnLink, jobId) {
@@ -54,50 +54,45 @@ async function getWriteRowIdx(sheetID, sheetCapacity, columnLink, jobId) {
         return -1;
     }
 
-    return formulaData.length + 2
+    return formulaData.length + 2;
 }
 
 /* End Region: Sheet Preprocessing and Handling ------------------- */
 /* Begin Region: LinkedIn Event Listeners and Scraping ------------ */
 
-let entryTemplate
 export const targetParentClassList = "jobs-search__job-details"
 export const targetButtonClassList = "artdeco-button__text"
 export const isTargetButtonText = (text) => text === "Apply" || text === "Easy Apply"
 
 
 export async function createListeners(sheetID, sheetCapacity, columnLink, data) {
-    entryTemplate = data
-    const parentContainer = document.getElementsByClassName(targetParentClassList)[0]
+    const entryTemplate = data;
+    const parentContainer = document.getElementsByClassName(targetParentClassList)[0];
     parentContainer.addEventListener('click', async function(event) {
 
         if (isTargetButtonText(event.target.innerText)) {
-            event.stopPropagation()
+            event.stopPropagation();
 
-            const jobId = extractJobId(document.URL)
-            const nextRowIdx = await getWriteRowIdx(sheetID, sheetCapacity, columnLink, jobId)
-
-            console.log(`nextRowIdx: ${nextRowIdx}`)
+            const jobId = extractJobId(document.URL);
+            const nextRowIdx = await getWriteRowIdx(sheetID, sheetCapacity, columnLink, jobId);
             
             if (nextRowIdx === -1) {
-                sendNotification("LinkedOut", "You have already applied to this job.")
-                return
+                sendNotification("LinkedOut", "You have already applied to this job.");
+                return;
             }
 
-            const data = []
-            const encodings = []
+            const data = [];
+            const encodings = [];
             
             for (let key in entryTemplate) {
-                const entry = entryTemplate[key]
-                data[getColumnIdx(key)] = entry.f()
-                encodings[getColumnIdx(key)] = entry.type
+                const entry = entryTemplate[key];
+                data[getColumnIdx(key)] = entry.f();j
+                encodings[getColumnIdx(key)] = entry.type;
             }
 
-            writeRow(sheetID, nextRowIdx, data, encodings)
+            writeRow(sheetID, nextRowIdx, data, encodings);
         }
     })
-
-    console.log("Listeners created")
 }
 
 /* End Region: LinkedIn Event Listeners and Scraping -------------- */
